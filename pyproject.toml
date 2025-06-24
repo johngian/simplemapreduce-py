@@ -29,7 +29,7 @@ dependencies = [
 
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
-test-cov = "pytest --cov=src/my_library --cov-report=html --cov-report=term {args:tests}"
+test-cov = "pytest --cov=src/simplemapreduce --cov-report=html --cov-report=term {args:tests}"
 lint = [
     "flake8 src tests",
     "black --check --diff src tests",
