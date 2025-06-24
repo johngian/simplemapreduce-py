@@ -1,6 +1,6 @@
 import multiprocessing
 import typing
-from concurrent.futures import ThreadPoolExecutor, wait
+from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
 

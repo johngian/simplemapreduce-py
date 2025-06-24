@@ -2,7 +2,7 @@ import multiprocessing
 
 import pytest
 
-from simplemapreduce import ReduceExecutor
+from simplemapreduce.executors import ReduceExecutor
 
 
 @pytest.fixture(
