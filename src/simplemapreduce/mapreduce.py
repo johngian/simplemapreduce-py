@@ -3,9 +3,6 @@ import typing
 from concurrent.futures import ThreadPoolExecutor, wait
 from threading import Thread
 
-ReduceReturnType = typing.TypeVar("ReduceReturnType")
-ReduceInputType = typing.TypeVar("ReduceInputType")
-
 
 class MapExecutor(Thread):
     def __init__(
@@ -33,17 +30,11 @@ class MapExecutor(Thread):
 
 
 class ReduceExecutor(Thread):
-    def __init__(
-        self,
-        in_q: multiprocessing.Queue,
-        reduce_fn: typing.Callable[
-            [ReduceInputType, ReduceInputType], ReduceReturnType
-        ],
-    ):
+    def __init__(self, in_q: multiprocessing.Queue, reduce_fn: typing.Callable):
         super().__init__()
         self.reduce_q = in_q
         self.reduce_fn = reduce_fn
-        self.value = None
+        self.return_value = None
 
     def run(self):
         while True:
@@ -52,8 +43,4 @@ class ReduceExecutor(Thread):
             if item is None:
                 break
 
-            self.value = self.reduce_fn(self.value, item)
-
-    def join(self, **kwargs) -> ReduceReturnType:
-        super().join(**kwargs)
-        return self.value
+            self.return_value = self.reduce_fn(self.return_value, item)

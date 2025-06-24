@@ -28,5 +28,5 @@ def test_map(map_input):
         in_q.put(elem)
     in_q.put(None)
 
-    result = thread.join()
-    assert result == sum(map_input)
+    thread.join()
+    assert thread.return_value == sum(map_input)
