@@ -40,11 +40,11 @@ class MapProcessing(Thread):
         self.batch: simplemapreduce.types.BatchProcessingList = []
         self.map_fn = map_fn
         self.max_workers = max_workers
+        self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
     def flush(self):
-        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-            for mapped in executor.map(self.map_fn, self.batch):
-                self.out_q.put(mapped)
+        for mapped in self.executor.map(self.map_fn, self.batch):
+            self.out_q.put(mapped)
         self.batch = []
 
     def add(self, item):
@@ -62,6 +62,7 @@ class MapProcessing(Thread):
             self.add(item)
 
         self.flush()
+        self.executor.shutdown()
         self.out_q.put(None)
 
 
