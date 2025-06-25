@@ -27,6 +27,11 @@ dependencies = [
     "mypy",
 ]
 
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest"
+]
+
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
 test-cov = "pytest --cov=src/simplemapreduce --cov-report=html --cov-report=term {args:tests}"
@@ -46,3 +51,6 @@ all = [
     "type-check",
     "test-cov",
 ]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.9", "3.10", "3.11", "3.12"]

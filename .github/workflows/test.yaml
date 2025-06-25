@@ -1,0 +1,48 @@
+name: Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-single-py-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Hatch
+        run: pip install hatch
+
+      - name: Linting
+        run: hatch run lint
+
+      - name: Type checking
+        run: hatch run type-check
+
+      - name: Testing
+        run: hatch run test
+
+  test-multi-py-version:
+    runs-on: ubuntu-latest
+    needs: test-single-py-version
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Hatch
+        run: pip install hatch
+
+      - name: Testing
+        run: hatch run test:test
