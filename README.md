@@ -1,7 +1,6 @@
 # simplemapreduce
 
 [![PyPI - Version](https://img.shields.io/pypi/v/simplemapreduce.svg)](https://pypi.org/project/simplemapreduce)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/simplemapreduce.svg)](https://pypi.org/project/simplemapreduce)
 
 -----
 
