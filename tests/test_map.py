@@ -10,15 +10,18 @@ from simplemapreduce.executors import MapProcessing
     ids=["small", "medium", "large", "xlarge", "batch-size-gt-size"],
 )
 def map_fixture(request):
+    """Fixture with combination of input size, batch size, max workers"""
     (size, workers, batch) = request.param
     return [f"Foo-{i}" for i in range(size)], workers, batch
 
 
 def map_fn(elem):
+    """Example map function: Prefix string"""
     return f"Mapped-{elem}"
 
 
 def test_map(map_fixture):
+    """Assert that the result of the map operation is correct"""
     (map_elems, workers, batch_size) = map_fixture
     in_q = multiprocessing.Queue()
     out_q = multiprocessing.Queue()
