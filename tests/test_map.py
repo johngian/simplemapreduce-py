@@ -2,16 +2,16 @@ import multiprocessing
 
 import pytest
 
-from simplemapreduce.executors import MapExecutor
+from simplemapreduce.executors import MapProcessing
 
 
 @pytest.fixture(
-    params=[(10, 1), (100, 2), (1000, 2), (10000, 4)],
-    ids=["small", "medium", "large", "xlarge"],
+    params=[(10, 1, 2), (100, 2, 10), (1000, 2, 100), (10000, 4, 1000), (100, 2, 200)],
+    ids=["small", "medium", "large", "xlarge", "batch-size-gt-size"],
 )
 def map_fixture(request):
-    (size, workers) = request.param
-    return [f"Foo-{i}" for i in range(size)], workers
+    (size, workers, batch) = request.param
+    return [f"Foo-{i}" for i in range(size)], workers, batch
 
 
 def map_fn(elem):
@@ -19,11 +19,11 @@ def map_fn(elem):
 
 
 def test_map(map_fixture):
-    (map_elems, workers) = map_fixture
+    (map_elems, workers, batch_size) = map_fixture
     in_q = multiprocessing.Queue()
     out_q = multiprocessing.Queue()
     out = []
-    thread = MapExecutor(in_q, out_q, map_fn, max_workers=workers)
+    thread = MapProcessing(in_q, out_q, map_fn, batch_size, workers)
     thread.start()
 
     for elem in map_elems:

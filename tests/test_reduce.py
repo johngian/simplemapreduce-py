@@ -2,7 +2,7 @@ import multiprocessing
 
 import pytest
 
-from simplemapreduce.executors import ReduceExecutor
+from simplemapreduce.executors import ReduceProcessing
 
 
 @pytest.fixture(
@@ -21,7 +21,7 @@ def reduce_fn(accum, elem):
 
 def test_map(map_input):
     in_q = multiprocessing.Queue()
-    thread = ReduceExecutor(in_q, reduce_fn)
+    thread = ReduceProcessing(in_q, reduce_fn)
     thread.start()
 
     for elem in map_input:
