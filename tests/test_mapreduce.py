@@ -1,9 +1,8 @@
-import multiprocessing
-
 import pytest
 
 from simplemapreduce import run_mapreduce
 from simplemapreduce.executors import MapProcessing, ReduceProcessing
+from simplemapreduce.types import TypedQueue
 
 
 @pytest.fixture(
@@ -32,8 +31,8 @@ def reduce_fn(accum, elem):
 def test_mapreduce(map_fixture):
     """Assert that the result of the map reduce operation is correct"""
     (map_elems, workers, batch_size) = map_fixture
-    in_q = multiprocessing.Queue()
-    out_q = multiprocessing.Queue()
+    in_q = TypedQueue()
+    out_q = TypedQueue()
     mapper = MapProcessing(in_q, out_q, map_fn, batch_size, workers)
     reducer = ReduceProcessing(out_q, reduce_fn)
     mapper.start()
@@ -52,8 +51,8 @@ def test_mapreduce(map_fixture):
 def test_mapreducehelper(map_fixture):
     """Assert that the result of the map reduce helper is correct"""
     (map_elems, workers, batch_size) = map_fixture
-    in_q = multiprocessing.Queue()
-    out_q = multiprocessing.Queue()
+    in_q = TypedQueue()
+    out_q = TypedQueue()
     for elem in map_elems:
         in_q.put(elem)
     in_q.put(None)

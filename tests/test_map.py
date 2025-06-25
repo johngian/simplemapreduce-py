@@ -1,8 +1,7 @@
-import multiprocessing
-
 import pytest
 
 from simplemapreduce.executors import MapProcessing
+from simplemapreduce.types import TypedQueue
 
 
 @pytest.fixture(
@@ -23,8 +22,8 @@ def map_fn(elem):
 def test_map(map_fixture):
     """Assert that the result of the map operation is correct"""
     (map_elems, workers, batch_size) = map_fixture
-    in_q = multiprocessing.Queue()
-    out_q = multiprocessing.Queue()
+    in_q = TypedQueue()
+    out_q = TypedQueue()
     out = []
     thread = MapProcessing(in_q, out_q, map_fn, batch_size, workers)
     thread.start()
