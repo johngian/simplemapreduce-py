@@ -1,6 +1,6 @@
-import multiprocessing
 import typing
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing.queues import Queue
 from threading import Thread
 
 
@@ -21,11 +21,14 @@ class MapProcessing(Thread):
         max_workers: Size of thread pool executor
     """
 
+    Element = typing.TypeVar("Element")
+    MappedElement = typing.TypeVar("MappedElement")
+
     def __init__(
         self,
-        in_q: multiprocessing.Queue,
-        out_q: multiprocessing.Queue,
-        map_fn: typing.Callable,
+        in_q: Queue[Element | None],
+        out_q: Queue[(MappedElement | None)],
+        map_fn: typing.Callable[[Element], MappedElement],
         batch_size: int,
         max_workers: int,
     ):
@@ -33,7 +36,7 @@ class MapProcessing(Thread):
         self.in_q = in_q
         self.out_q = out_q
         self.batch_size = batch_size
-        self.batch = []
+        self.batch: typing.List[MapProcessing.Element | None] = []
         self.map_fn = map_fn
         self.max_workers = max_workers
 
@@ -70,13 +73,20 @@ class ReduceProcessing(Thread):
 
     Args:
         in_q: Processing input queue
-        reduce_fn: Reduce function to apply on each item.
+        reduce_fn: Reduce function to apply on each item. Signature: (acc, value) -> reduced.
 
     Attributes:
         return_value: Value of the reduced operation
     """
 
-    def __init__(self, in_q: multiprocessing.Queue, reduce_fn: typing.Callable):
+    ReduceItem = typing.TypeVar("ReduceItem")
+    ReduceValue = typing.TypeVar("ReduceValue")
+
+    def __init__(
+        self,
+        in_q: Queue[ReduceItem],
+        reduce_fn: typing.Callable[[ReduceValue | None, ReduceItem], ReduceValue],
+    ):
         super().__init__()
         self.reduce_q = in_q
         self.reduce_fn = reduce_fn
