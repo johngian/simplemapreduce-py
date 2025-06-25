@@ -1,15 +1,29 @@
 import typing
-from multiprocessing.queues import Queue
+from multiprocessing import Queue as MPQueue
 
 T = typing.TypeVar("T")
 
 
-class TypedQueue(Queue, typing.Generic[T]):
-    def put(self, obj: T, *args, **kwargs) -> None:
-        super().put(obj, *args, **kwargs)
+class TypedQueue(typing.Generic[T]):
+    """A typed wrapper around multiprocessing.Queue"""
 
-    def get(self, *args, **kwargs) -> T:
-        return super().get(*args, **kwargs)
+    def __init__(self, maxsize: int = 0, *, ctx=None):
+        self._queue: MPQueue
+
+        if ctx is None:
+            self._queue = MPQueue(maxsize)
+        else:
+            self._queue = ctx.Queue(maxsize)
+
+    def put(
+        self, item: T, block: bool = True, timeout: typing.Optional[float] = None
+    ) -> None:
+        """Put an item into the queue"""
+        self._queue.put(item, block, timeout)
+
+    def get(self, block: bool = True, timeout: typing.Optional[float] = None) -> T:
+        """Get an item from the queue"""
+        return self._queue.get(block, timeout)
 
 
 MapInputElement = typing.TypeVar("MapInputElement")
