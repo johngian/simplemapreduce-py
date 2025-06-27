@@ -35,6 +35,6 @@ MapFnCallable = typing.Callable[[MapInputElement], MappedInputElement]
 ReduceElement = typing.TypeVar("ReduceElement")
 ReduceValue = typing.TypeVar("ReduceValue")
 ReduceFnCallable = typing.Callable[
-    [typing.Union[ReduceValue, None], ReduceElement], ReduceValue
+    [typing.Union[ReduceValue, None], ReduceElement], typing.Union[ReduceValue, None]
 ]
 ReduceInputQueue = TypedQueue[typing.Union[ReduceElement, None]]
