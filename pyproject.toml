@@ -25,6 +25,8 @@ dependencies = [
     "isort",
     "flake8",
     "mypy",
+    "sphinx",
+    "sphinx-autodoc-typehints"
 ]
 
 [tool.hatch.envs.test]
