@@ -1,6 +1,7 @@
 import typing
 
-from simplemapreduce import MapProcessing, ReduceProcessing, types
+from simplemapreduce import types
+from simplemapreduce.executors import MapProcessing, ReduceProcessing
 
 
 class Job(

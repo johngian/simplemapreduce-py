@@ -1,7 +1,7 @@
 import pytest
 
-from simplemapreduce import run_mapreduce
 from simplemapreduce.executors import MapProcessing, ReduceProcessing
+from simplemapreduce.helpers import run_mapreduce
 from simplemapreduce.types import TypedQueue
 
 

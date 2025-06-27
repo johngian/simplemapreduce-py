@@ -3,7 +3,7 @@ import time
 
 import pytest
 
-from simplemapreduce import run_mapreduce
+from simplemapreduce.helpers import run_mapreduce
 from simplemapreduce.types import TypedQueue
 
 
