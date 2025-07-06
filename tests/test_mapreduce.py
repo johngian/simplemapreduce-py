@@ -2,6 +2,7 @@ import pytest
 
 from simplemapreduce.executors import MapProcessing, ReduceProcessing
 from simplemapreduce.helpers import run_mapreduce
+from simplemapreduce.metrics import Metrics
 from simplemapreduce.types import TypedQueue
 
 
@@ -33,8 +34,9 @@ def test_mapreduce(map_fixture):
     (map_elems, workers, batch_size) = map_fixture
     in_q = TypedQueue()
     out_q = TypedQueue()
-    mapper = MapProcessing(in_q, out_q, map_fn, batch_size, workers)
-    reducer = ReduceProcessing(out_q, reduce_fn)
+    metrics = Metrics()
+    mapper = MapProcessing(in_q, out_q, map_fn, batch_size, workers, metrics)
+    reducer = ReduceProcessing(out_q, reduce_fn, metrics)
     mapper.start()
     reducer.start()
 
