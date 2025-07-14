@@ -1,5 +1,6 @@
 import simplemapreduce.types
 from simplemapreduce.executors import MapProcessing, ReduceProcessing
+from simplemapreduce.metrics import Metrics
 
 
 def run_mapreduce(
@@ -11,8 +12,9 @@ def run_mapreduce(
     max_workers: int,
 ):
     """Helper function to run a map/reduce job"""
-    mapper = MapProcessing(in_q, out_q, map_fn, batch_size, max_workers)
-    reducer = ReduceProcessing(out_q, reduce_fn)
+    metrics = Metrics()
+    mapper = MapProcessing(in_q, out_q, map_fn, batch_size, max_workers, metrics)
+    reducer = ReduceProcessing(out_q, reduce_fn, metrics)
     mapper.start()
     reducer.start()
     mapper.join()

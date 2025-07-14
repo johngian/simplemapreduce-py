@@ -1,6 +1,7 @@
 import pytest
 
 from simplemapreduce.executors import MapProcessing
+from simplemapreduce.metrics import Metrics
 from simplemapreduce.types import TypedQueue
 
 
@@ -25,7 +26,8 @@ def test_map(map_fixture):
     in_q = TypedQueue()
     out_q = TypedQueue()
     out = []
-    thread = MapProcessing(in_q, out_q, map_fn, batch_size, workers)
+    metrics = Metrics()
+    thread = MapProcessing(in_q, out_q, map_fn, batch_size, workers, metrics)
     thread.start()
 
     for elem in map_elems:

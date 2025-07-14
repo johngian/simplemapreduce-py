@@ -1,3 +1,9 @@
+import json
+import os
+import signal
+from contextlib import redirect_stdout
+from io import StringIO
+
 import pytest
 
 from simplemapreduce.jobs import Job
@@ -36,3 +42,37 @@ def test_mapreduce_job(map_fixture):
     job.wait()
 
     assert job.result() == len("mapped-foo") * len(map_elems)
+
+
+def test_mapreduce_metrics(map_fixture):
+    """Assert that the result of the map reduce metrics are correct"""
+    (map_elems, workers, batch_size) = map_fixture
+    job = Job(batch_size, workers, map_fn, reduce_fn)
+    for elem in map_elems:
+        job.add_element(elem)
+    job.wait()
+
+    assert job.metrics.elements_mapped == len(map_elems)
+    assert job.metrics.elements_reduced == len(map_elems)
+    assert job.metrics.time_elapsed().total_seconds() > 0
+
+
+def test_signal_handler(map_fixture):
+    """Assert that the signal handler prints the metrics to stdout"""
+    captured_output = StringIO()
+    with redirect_stdout(captured_output):
+        (map_elems, workers, batch_size) = map_fixture
+        job = Job(batch_size, workers, map_fn, reduce_fn)
+        for elem in map_elems:
+            job.add_element(elem)
+        job.wait()
+        os.kill(os.getpid(), signal.SIGUSR1)
+
+    out = captured_output.getvalue()
+    assert len(out.strip()) > 0
+    assert set(json.loads(out).keys()) == {
+        "job_name",
+        "elements_added",
+        "elements_mapped",
+        "time_elapsed",
+    }

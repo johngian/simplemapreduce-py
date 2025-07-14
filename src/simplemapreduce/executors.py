@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Thread
 
 import simplemapreduce.types
+from simplemapreduce.metrics import Metrics
 
 
 class MapProcessing(Thread):
@@ -32,6 +33,7 @@ class MapProcessing(Thread):
         ],
         batch_size: int,
         max_workers: int,
+        metrics: Metrics,
     ):
         super().__init__()
         self.in_q = in_q
@@ -41,10 +43,12 @@ class MapProcessing(Thread):
         self.map_fn = map_fn
         self.max_workers = max_workers
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        self.metrics = metrics
 
     def flush(self):
         for mapped in self.executor.map(self.map_fn, self.batch):
             self.out_q.put(mapped)
+            self.metrics.element_mapped()
         self.batch = []
 
     def add(self, item):
@@ -85,11 +89,13 @@ class ReduceProcessing(Thread):
         self,
         in_q: simplemapreduce.types.ReduceInputQueue,
         reduce_fn: simplemapreduce.types.ReduceFnCallable,
+        metrics: Metrics,
     ):
         super().__init__()
         self.reduce_q = in_q
         self.reduce_fn = reduce_fn
         self.return_value = None
+        self.metrics = metrics
 
     def run(self):
         while True:
@@ -99,3 +105,4 @@ class ReduceProcessing(Thread):
                 break
 
             self.return_value = self.reduce_fn(self.return_value, item)
+            self.metrics.element_reduced()

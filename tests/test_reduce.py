@@ -1,6 +1,7 @@
 import pytest
 
 from simplemapreduce.executors import ReduceProcessing
+from simplemapreduce.metrics import Metrics
 from simplemapreduce.types import TypedQueue
 
 
@@ -23,7 +24,8 @@ def reduce_fn(accum, elem):
 def test_reduce(reduce_input):
     """Assert that the result of the reduce operation is correct"""
     in_q = TypedQueue()
-    thread = ReduceProcessing(in_q, reduce_fn)
+    metrics = Metrics()
+    thread = ReduceProcessing(in_q, reduce_fn, metrics)
     thread.start()
 
     for elem in reduce_input:
